@@ -61,6 +61,28 @@
         .dot.active { background: #000; transform: scale(1.5); }
         .hero-dot.active { background: #fff; }
 
+        /* ESTILOS DE TRANSICIÓN */
+        .page-transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 9999;
+            transform: translateY(0);
+            transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+            pointer-events: none;
+        }
+
+        .page-transition-overlay.hidden-overlay {
+            transform: translateY(-100%);
+        }
+
+        .page-transition-overlay.active-exit {
+            transform: translateY(0) !important;
+        }
+
         #home-link { transition: opacity 0.3s ease; }
 
         .profile-image {
@@ -115,9 +137,30 @@
             border-radius: 4px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
+        
+        /* MODIFICACIÓN: Estilo para limitar a 2 líneas y permitir scroll en el párrafo */
+        .contact-scroll-box {
+            height: 3.5rem; 
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #000 #f3f4f6;
+            line-height: 1.75rem; 
+            padding: 0 1rem;
+            border-left: 1px solid #e5e7eb;
+        }
+
+        .contact-scroll-box::-webkit-scrollbar {
+            width: 2px;
+        }
+
+        .contact-scroll-box::-webkit-scrollbar-thumb {
+            background: #000;
+        }
     </style>
 </head>
 <body class="text-black bg-white">
+
+    <div id="transition-overlay" class="page-transition-overlay"></div>
 
     <nav class="fixed top-0 left-0 w-full z-50 nav-blur border-b border-black/5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -172,17 +215,20 @@
         <!-- SECCIÓN SOBRE MÍ (Página 1) -->
         <section data-section-name="Sobre Mí" class="bg-white flex items-center h-screen w-full">
             <div class="w-full h-full grid grid-cols-1 md:grid-cols-3 items-center">
-                <div class="h-full relative overflow-hidden group md:col-span-1">
+                <a href="AitorGomez.html" class="h-full relative overflow-hidden group md:col-span-1">
                     <img src="Yo.jpeg" alt="" class="profile-image">
-                </div>
+                </a>
                 <div class="flex flex-col justify-center h-full px-12 lg:px-32 bg-white md:col-span-2">
                     <div class="block">
                         <h2 class="text-xs font-bold tracking-[0.6em] uppercase text-gray-400 mb-8">Sobre Mi</h2>
                         <h3 class="text-7xl lg:text-[9rem] font-bold text-black mb-12 uppercase leading-[0.85] tracking-tighter">
                             Aitor<br>Gómez.
                         </h3>
-                        <p class="text-3xl lg:text-4xl text-gray-600 font-light leading-tight max-w-3xl">
-                        Me llamo Aitor Gómez y este es mi progreso en el Grado Superior de Desarrollo de Aplicaciones Multiplataforma (DAM).
+                        <p class="text-3xl lg:text-3xl text-gray-600 font-light leading-tight max-w-3xl">
+                            Me llamo Aitor Gómez y este es mi progreso en el Grado Superior de Desarrollo de Aplicaciones Multiplataforma (DAM).
+                        </p>
+                        <p class="text-1xl lg:text-1xl text-black-600 font-light leading-tight max-w-1xl">
+                            <br>Pincha en mi foto para saber más sobre mí.
                         </p>
                     </div>
                 </div>
@@ -197,7 +243,7 @@
                     <div class="bg-white p-8 border border-gray-100 h-64 flex flex-col justify-between">
                         <h4 class="font-bold uppercase tracking-tight text-lg">Programación Java</h4>
                         <p class="text-gray-500 text-xs uppercase tracking-widest">POO y Algoritmia.</p>
-                        <a href="Programacion.html" class="text-xs font-black uppercase underline">Detalles</a>
+                        <button onclick="navigateWithTransition('Programacion.html')" class="text-xs font-black uppercase underline text-left">Detalles</button>
                     </div>
                     <div class="bg-white p-8 border border-gray-100 h-64 flex flex-col justify-between">
                         <h4 class="font-bold uppercase tracking-tight text-lg">Bases de Datos SQL</h4>
@@ -217,11 +263,19 @@
 
         <!-- CONTACTO (Página 3) -->
         <footer data-section-name="Contacto" class="bg-white flex flex-col justify-center items-center px-8">
-            <div class="text-center">
+            <div class="text-center max-w-2xl w-full">
                 <span class="text-6xl font-black uppercase tracking-tighter text-black">DAM<span class="font-light">Progress</span></span>
+                
+                <!-- MODIFICACIÓN: Contenedor interactivo de 2 líneas con scroll -->
+                <div class="mt-12 contact-scroll-box text-left mx-auto max-w-md">
+                    <p class="text-sm text-gray-600 uppercase tracking-widest font-medium">
+                        12/01/2026 - Creacion de la estructura de la página web utilizando HTML, CSS y JavaScript.<br>
+                    </p>
+                </div>
+
                 <div class="mt-12 flex justify-center gap-12">
-                    <p class="font-bold uppercase tracking-widest text-sm">GitHub: @damuser</p>
-                    <p class="font-bold uppercase tracking-widest text-sm">LinkedIn: /in/damprofile</p>
+                    <p class="font-bold uppercase tracking-widest text-sm cursor-pointer hover:underline">GitHub: @damuser</p>
+                    <p class="font-bold uppercase tracking-widest text-sm cursor-pointer hover:underline">LinkedIn: /in/damprofile</p>
                 </div>
                 <p class="mt-24 text-gray-400 text-[10px] uppercase tracking-[0.5em]">&copy; 2026-27 Grado Superior DAM <br> Aitor Gómez</p>
             </div>
@@ -232,100 +286,48 @@
         let currentPage = 0;
         const totalPages = 4;
         const wrapper = document.getElementById('main-wrapper');
+        const overlay = document.getElementById('transition-overlay');
         const homeLink = document.getElementById('home-link');
-        const heroSearchInput = document.getElementById('hero-search');
-        const heroSearchResults = document.getElementById('hero-search-results');
-        const heroResultsList = document.getElementById('hero-results-list');
         let isScrolling = false;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedPage = localStorage.getItem('last_page_index');
-            if (savedPage !== null) {
-                goToPage(parseInt(savedPage), false);
-            } else {
-                updateUI();
-            }
+        // Efecto de entrada al cargar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                overlay.classList.add('hidden-overlay');
+            }, 100);
         });
 
-        function goToPage(pageIndex, save = true) {
+        // Función de salida hacia Programación
+        function navigateWithTransition(url) {
+            overlay.classList.remove('hidden-overlay');
+            overlay.classList.add('active-exit');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 600);
+        }
+
+        function goToPage(pageIndex) {
             if (pageIndex < 0 || pageIndex >= totalPages) return;
             currentPage = pageIndex;
             wrapper.style.transform = `translateX(-${currentPage * 100}vw)`;
-            if (save) localStorage.setItem('last_page_index', currentPage);
             updateUI();
         }
 
         function updateUI() {
-            if (currentPage > 0) {
-                homeLink.classList.remove('opacity-0', 'pointer-events-none');
-                homeLink.classList.add('opacity-100', 'pointer-events-auto');
-            } else {
-                homeLink.classList.add('opacity-0', 'pointer-events-none');
-                homeLink.classList.remove('opacity-100', 'pointer-events-auto');
-            }
-
-            for (let i = 0; i < totalPages; i++) {
-                const dot = document.getElementById(`dot-${i}`);
-                if (!dot) continue;
-                dot.classList.remove('active', 'hero-dot');
-                if (i === currentPage) {
-                    dot.classList.add('active');
-                    if (currentPage === 0) dot.classList.add('hero-dot');
-                }
-            }
-        }
-
-        // INTEGRACIÓN DEL BUSCADOR: Lógica de rastreo de contenido centralizado
-        heroSearchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            heroResultsList.innerHTML = '';
+            if (currentPage > 0) homeLink.classList.replace('opacity-0', 'opacity-100'), homeLink.classList.replace('pointer-events-none', 'pointer-events-auto');
+            else homeLink.classList.replace('opacity-100', 'opacity-0'), homeLink.classList.replace('pointer-events-auto', 'pointer-events-none');
             
-            if (query.length < 2) {
-                heroSearchResults.classList.add('hidden');
-                return;
-            }
-
-            const sections = document.querySelectorAll('header, section, footer');
-            let found = false;
-
-            sections.forEach((sec, index) => {
-                const text = sec.innerText.toLowerCase();
-                const sectionName = sec.getAttribute('data-section-name') || 'Sección';
-
-                if (text.includes(query)) {
-                    found = true;
-                    const item = document.createElement('div');
-                    item.className = "cursor-pointer hover:bg-gray-100 p-4 border-b border-gray-50 transition-colors last:border-0";
-                    item.innerHTML = `
-                        <p class="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">${sectionName}</p>
-                        <p class="text-sm font-medium text-black">Coincidencia encontrada</p>
-                    `;
-                    item.onclick = () => {
-                        goToPage(index);
-                        heroSearchInput.value = '';
-                        heroSearchResults.classList.add('hidden');
-                    };
-                    heroResultsList.appendChild(item);
-                }
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentPage);
+                if (i === 0) dot.classList.toggle('hero-dot', currentPage === 0);
             });
-
-            if (!found) {
-                heroResultsList.innerHTML = '<p class="p-4 text-[10px] uppercase font-bold text-gray-400">Sin resultados</p>';
-            }
-            heroSearchResults.classList.remove('hidden');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!heroSearchInput.contains(e.target) && !heroSearchResults.contains(e.target)) {
-                heroSearchResults.classList.add('hidden');
-            }
-        });
+        }
 
         window.addEventListener('wheel', (e) => {
             if (isScrolling) return;
-            if (Math.abs(e.deltaY) > 30 || Math.abs(e.deltaX) > 30) {
+            if (Math.abs(e.deltaY) > 30) {
                 isScrolling = true;
-                if (e.deltaY > 0 || e.deltaX > 0) goToPage(currentPage + 1);
+                if (e.deltaY > 0) goToPage(currentPage + 1);
                 else goToPage(currentPage - 1);
                 setTimeout(() => isScrolling = false, 1000);
             }
