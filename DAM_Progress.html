@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAMProgress | Diario de Aprendizaje</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; 
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+        }
+
+        #main-wrapper {
+            display: flex;
+            width: 400vw; 
+            height: 100vh;
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: transform;
+        }
+
+        section, header, footer {
+            flex: 0 0 100vw;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .card-minimal {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-minimal:hover {
+            border-color: #000;
+            transform: translateY(-4px);
+        }
+
+        .page-indicator {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 40;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(150, 150, 150, 0.5);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: #000;
+            transform: scale(1.5);
+        }
+
+        .hero-dot.active {
+            background: #fff;
+        }
+
+        #home-link {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.5s ease;
+        }
+
+        .profile-image:hover {
+            filter: grayscale(0%);
+        }
+
+        .interactive-text-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .interactive-text-card:hover {
+            background-color: #fcfcfc;
+            transform: translateX(5px);
+        }
+
+        .interactive-text-card:hover h3 {
+            color: #000;
+        }
+
+        .interactive-text-card:hover .arrow-icon {
+            transform: translateX(10px);
+            opacity: 1;
+        }
+
+        .arrow-icon {
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .scroll-info-box {
+            height: 6rem;
+            overflow-y: auto;
+            border-top: 1px solid #f3f3f3;
+            padding-top: 1.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: #000 #f3f4f6;
+        }
+
+        .scroll-info-box::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .scroll-info-box::-webkit-scrollbar-track {
+            background: #f9f9f9;
+        }
+
+        .scroll-info-box::-webkit-scrollbar-thumb {
+            background: #000;
+        }
+    </style>
+</head>
+<body class="text-black bg-white">
+
+    <nav class="fixed top-0 left-0 w-full z-50 nav-blur border-b border-black/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="text-2xl font-black tracking-tighter text-black uppercase">DAM<span class="font-light">Progress</span></span>
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-10">
+                        <button id="home-link" onclick="goToPage(0)" class="text-black hover:line-through text-sm font-black uppercase tracking-widest transition-all opacity-0 pointer-events-none border-r border-black/10 pr-10">Inicio</button>
+                        <button onclick="goToPage(1)" class="text-black hover:line-through text-sm font-bold uppercase tracking-widest transition-all">Sobre mí</button>
+                        <button onclick="goToPage(2)" class="text-black hover:line-through text-sm font-bold uppercase tracking-widest transition-all">Asignaturas</button>
+                        <button onclick="goToPage(3)" class="text-black hover:line-through text-sm font-bold uppercase tracking-widest transition-all">Desarrollo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-indicator">
+        <div class="dot active hero-dot" id="dot-0"></div>
+        <div class="dot" id="dot-1"></div>
+        <div class="dot" id="dot-2"></div>
+        <div class="dot" id="dot-3"></div>
+    </div>
+
+    <div id="main-wrapper">
+
+        <header class="bg-black flex items-center justify-center px-4 text-white">
+            <div class="max-w-7xl mx-auto text-center">
+                <h1 class="text-7xl sm:text-8xl lg:text-9xl font-bold tracking-tighter mb-10 uppercase leading-none">
+                    DAM<br><span class="text-gray-400">Progress</span>
+                </h1>
+                <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto mb-16 uppercase tracking-[0.3em]">
+                    Ingeniería de software y evolución académica.
+                </p>
+                <div class="flex justify-center gap-8">
+                    <button onclick="goToPage(2)" class="bg-white text-black px-12 py-5 font-bold uppercase text-sm tracking-widest hover:bg-gray-200">
+                        Ver Módulos
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- SECCIÓN SOBRE MÍ: Se ha cambiado la cuadrícula para que la imagen ocupe menos ancho -->
+        <section class="bg-white flex items-center h-screen w-full">
+            <!-- Grid asimétrico: 1/3 para la imagen, 2/3 para el contenido en pantallas grandes -->
+            <div class="w-full h-full grid grid-cols-1 md:grid-cols-3 items-center">
+                
+                <!-- Columna Izquierda: Imagen (Ocupa 1/3 del ancho) -->
+                <a href="AitorGomez.html" class="h-full relative overflow-hidden group md:col-span-1">
+                    <img src="Yo.jpeg" alt="[Imagen de desarrollador]" class="profile-image shadow-none">
+                    <div class="absolute bottom-0 left-0 bg-black text-white p-6 text-[10px] uppercase tracking-[0.5em] opacity-0 group-hover:opacity-100 transition-opacity">
+                        Pincha aquí para saber mas
+                    </div>
+                </a>
+
+                <!-- Columna Derecha: Contenido (Ocupa 2/3 del ancho) -->
+                <div class="flex flex-col justify-center h-full px-12 lg:px-32 bg-white md:col-span-2">
+                    <a href="AitorGomez.html" class="interactive-text-card block group/card">
+                        <h2 class="text-xs font-bold tracking-[0.6em] uppercase text-gray-400 mb-8">Sobre Mi</h2>
+                        <h3 class="text-7xl lg:text-[9rem] font-bold text-black mb-12 uppercase leading-[0.85] tracking-tighter flex flex-col gap-2">
+                            <span>Aitor</span>
+                            <span class="flex items-center gap-8">
+                                Gómez
+                                <svg class="arrow-icon w-16 h-16 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            </span>
+                        </h3>
+                        <div class="space-y-10 mb-16">
+                            <p class="text-3xl lg:text-4xl text-gray-600 font-light leading-tight max-w-3xl">
+                            Yo soy Aitor y comienzo el grado superior de Desarrollo de Aplicaciones Multiplataforma. Este es mi <b>Último Intento</b> y voy a aprovecharlo al maximo.
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Registro de Actividad -->
+                    <div class="max-w-7xl">
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.5em] text-gray-300 mb-6">Registro de Creación</h4>
+                        <div class="scroll-info-box">
+                            <p class="text-lg text-gray-500 leading-relaxed font-light">
+                                12/01/2026 - Creacion de la Web junto con las paginas de las asignaturas. <a href="Programacion.html"><u>Página Programacion</u></a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-gray-50 flex items-center justify-center px-8 border-l border-r border-gray-100">
+            <div class="max-w-7xl mx-auto w-full">
+                <h2 class="text-4xl font-bold text-black uppercase tracking-tighter mb-16">Estructura Académica</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-8 card-minimal h-64 flex flex-col justify-between">
+                        <h4 class="font-bold uppercase tracking-tight text-lg">Programación</h4>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest">Java y POO.</p>
+                        <a href="programacion.html" class="text-xs font-black uppercase underline">Detalles</a>
+                    </div>
+                    <div class="bg-white p-8 card-minimal h-64 flex flex-col justify-between">
+                        <h4 class="font-bold uppercase tracking-tight text-lg">Bases de Datos</h4>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest">SQL y Modelado.</p>
+                        <span class="text-xs font-black uppercase opacity-20">Próximamente</span>
+                    </div>
+                    <div class="bg-white p-8 card-minimal h-64 flex flex-col justify-between">
+                        <h4 class="font-bold uppercase tracking-tight text-lg">Sistemas</h4>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest">Admin de SO.</p>
+                        <span class="text-xs font-black uppercase opacity-20">Próximamente</span>
+                    </div>
+                    <div class="bg-white p-8 card-minimal h-64 flex flex-col justify-between">
+                        <h4 class="font-bold uppercase tracking-tight text-lg">Entornos</h4>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest">Git y Testing.</p>
+                        <span class="text-xs font-black uppercase opacity-20">Próximamente</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-white flex flex-col justify-center items-center px-8 border-l border-gray-100">
+            <div class="text-center">
+                <span class="text-6xl font-black uppercase tracking-tighter text-black">DAM<span class="font-light">Progress</span></span>
+                <div class="mt-12 flex justify-center gap-12">
+                    <a href="#" class="font-bold uppercase tracking-widest text-sm hover:underline">GitHub</a>
+                    <a href="#" class="font-bold uppercase tracking-widest text-sm hover:underline">LinkedIn</a>
+                    <a href="#" class="font-bold uppercase tracking-widest text-sm hover:underline">Instagram</a>
+
+                </div>
+                <p class="mt-24 text-gray-400 text-[15px] uppercase tracking-[0.5em]">&copy; 2026-27 Grado Superior de Desarrollo de Aplicaciones Multiplataforma <br> Aitor Gómez</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        let currentPage = 0;
+        const totalPages = 4;
+        const wrapper = document.getElementById('main-wrapper');
+        const homeLink = document.getElementById('home-link');
+        let isScrolling = false;
+
+        // --- ÚLTIMA MODIFICACIÓN: Recuperación de la página guardada al cargar el DOM ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedPage = localStorage.getItem('last_page_index');
+            if (savedPage !== null) {
+                goToPage(parseInt(savedPage), false);
+            } else {
+                updateUI();
+            }
+        });
+
+        function goToPage(pageIndex, save = true) {
+            if (pageIndex < 0 || pageIndex >= totalPages) return;
+            
+            currentPage = pageIndex;
+            wrapper.style.transform = `translateX(-${currentPage * 100}vw)`;
+            
+            // --- ÚLTIMA MODIFICACIÓN: Guardado automático de la página actual en localStorage ---
+            if (save) {
+                localStorage.setItem('last_page_index', currentPage);
+            }
+            
+            updateUI();
+        }
+
+        function updateUI() {
+            if (currentPage > 0) {
+                homeLink.classList.remove('opacity-0', 'pointer-events-none');
+                homeLink.classList.add('opacity-100', 'pointer-events-auto');
+            } else {
+                homeLink.classList.add('opacity-0', 'pointer-events-none');
+                homeLink.classList.remove('opacity-100', 'pointer-events-auto');
+            }
+
+            for (let i = 0; i < totalPages; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (!dot) continue;
+                dot.classList.remove('active', 'hero-dot');
+                if (i === currentPage) {
+                    dot.classList.add('active');
+                    if (currentPage === 0) dot.classList.add('hero-dot');
+                }
+            }
+        }
+
+        window.addEventListener('wheel', (e) => {
+            const infoBox = document.querySelector('.scroll-info-box');
+            if (e.target.closest('.scroll-info-box')) {
+                return; 
+            }
+
+            if (isScrolling) return;
+
+            if (Math.abs(e.deltaY) > 30 || Math.abs(e.deltaX) > 30) {
+                isScrolling = true;
+                
+                if (e.deltaY > 0 || e.deltaX > 0) {
+                    goToPage(currentPage + 1);
+                } else {
+                    goToPage(currentPage - 1);
+                }
+
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 1000);
+            }
+        });
+
+        let touchStartX = 0;
+        window.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
+        window.addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) goToPage(currentPage + 1);
+                else goToPage(currentPage - 1);
+            }
+        });
+    </script>
+</body>
+</html>
