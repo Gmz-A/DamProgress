@@ -39,16 +39,6 @@
             background-color: rgba(255, 255, 255, 0.9);
         }
 
-        .card-minimal {
-            transition: all 0.3s ease;
-            border: 1px solid #e5e7eb;
-        }
-
-        .card-minimal:hover {
-            border-color: #000;
-            transform: translateY(-4px);
-        }
-
         .page-indicator {
             position: fixed;
             right: 2rem;
@@ -68,18 +58,10 @@
             transition: all 0.3s;
         }
 
-        .dot.active {
-            background: #000;
-            transform: scale(1.5);
-        }
+        .dot.active { background: #000; transform: scale(1.5); }
+        .hero-dot.active { background: #fff; }
 
-        .hero-dot.active {
-            background: #fff;
-        }
-
-        #home-link {
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
+        #home-link { transition: opacity 0.3s ease; }
 
         .profile-image {
             width: 100%;
@@ -89,54 +71,49 @@
             transition: filter 0.5s ease;
         }
 
-        .profile-image:hover {
-            filter: grayscale(0%);
+        .profile-image:hover { filter: grayscale(0%); }
+
+        /* Estilos específicos para el nuevo buscador central */
+        .search-hero-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .interactive-text-card {
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            cursor: pointer;
-            border: 1px solid transparent;
+        .search-hero-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 1rem 0;
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            text-align: center;
+            transition: border-color 0.3s ease;
         }
 
-        .interactive-text-card:hover {
-            background-color: #fcfcfc;
-            transform: translateX(5px);
+        .search-hero-input:focus {
+            outline: none;
+            border-color: white;
         }
 
-        .interactive-text-card:hover h3 {
-            color: #000;
-        }
-
-        .interactive-text-card:hover .arrow-icon {
-            transform: translateX(10px);
-            opacity: 1;
-        }
-
-        .arrow-icon {
-            transition: all 0.3s ease;
-            opacity: 0;
-        }
-
-        .scroll-info-box {
-            height: 6rem;
+        .search-hero-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            color: black;
+            margin-top: 1rem;
+            max-height: 250px;
             overflow-y: auto;
-            border-top: 1px solid #f3f3f3;
-            padding-top: 1.5rem;
-            scrollbar-width: thin;
-            scrollbar-color: #000 #f3f4f6;
-        }
-
-        .scroll-info-box::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .scroll-info-box::-webkit-scrollbar-track {
-            background: #f9f9f9;
-        }
-
-        .scroll-info-box::-webkit-scrollbar-thumb {
-            background: #000;
+            z-index: 100;
+            text-align: left;
+            border-radius: 4px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -145,7 +122,7 @@
     <nav class="fixed top-0 left-0 w-full z-50 nav-blur border-b border-black/5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
-                <div class="flex-shrink-0 flex items-center">
+                <div class="flex items-center">
                     <span class="text-2xl font-black tracking-tighter text-black uppercase">DAM<span class="font-light">Progress</span></span>
                 </div>
                 
@@ -169,108 +146,86 @@
     </div>
 
     <div id="main-wrapper">
-
-        <header class="bg-black flex items-center justify-center px-4 text-white">
-            <div class="max-w-7xl mx-auto text-center">
+        <!-- HEADER (Página 0) -->
+        <header data-section-name="Inicio" class="bg-black flex items-center justify-center px-4 text-white">
+            <div class="max-w-7xl mx-auto text-center w-full">
                 <h1 class="text-7xl sm:text-8xl lg:text-9xl font-bold tracking-tighter mb-10 uppercase leading-none">
                     DAM<br><span class="text-gray-400">Progress</span>
                 </h1>
                 <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto mb-16 uppercase tracking-[0.3em]">
-                    Camino a convertirme en Desarrollador de Aplicaciones Multiplataforma
+                    La Última Oportunidad
                 </p>
-                <div class="flex justify-center gap-8">
-                    <button onclick="goToPage(2)" class="bg-white text-black px-12 py-5 font-bold uppercase text-sm tracking-widest hover:bg-gray-200">
-                        Ver Módulos
-                    </button>
+                
+                <!-- INTEGRACIÓN DEL BUSCADOR: Sustituye al botón de ver módulos -->
+                <div class="search-hero-container">
+                    <div class="flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" id="hero-search" placeholder="EXPLORAR CONTENIDO..." class="search-hero-input">
+                    </div>
+                    <div id="hero-search-results" class="search-hero-results hidden">
+                        <div id="hero-results-list" class="p-2"></div>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <!-- SECCIÓN SOBRE MÍ: Se ha cambiado la cuadrícula para que la imagen ocupe menos ancho -->
-        <section class="bg-white flex items-center h-screen w-full">
-            <!-- Grid asimétrico: 1/3 para la imagen, 2/3 para el contenido en pantallas grandes -->
+        <!-- SECCIÓN SOBRE MÍ (Página 1) -->
+        <section data-section-name="Sobre Mí" class="bg-white flex items-center h-screen w-full">
             <div class="w-full h-full grid grid-cols-1 md:grid-cols-3 items-center">
-                
-                <!-- Columna Izquierda: Imagen (Ocupa 1/3 del ancho) -->
-                <a href="AitorGomez.html" class="h-full relative overflow-hidden group md:col-span-1">
-                    <img src="Yo.jpeg" alt="[Imagen de desarrollador]" class="profile-image shadow-none">
-                    <div class="absolute bottom-0 left-0 bg-black text-white p-6 text-[10px] uppercase tracking-[0.5em] opacity-0 group-hover:opacity-100 transition-opacity">
-                        Pincha aquí para saber mas
-                    </div>
-                </a>
-
-                <!-- Columna Derecha: Contenido (Ocupa 2/3 del ancho) -->
+                <div class="h-full relative overflow-hidden group md:col-span-1">
+                    <img src="Yo.jpeg" alt="" class="profile-image">
+                </div>
                 <div class="flex flex-col justify-center h-full px-12 lg:px-32 bg-white md:col-span-2">
-                    <a href="AitorGomez.html" class="interactive-text-card block group/card">
+                    <div class="block">
                         <h2 class="text-xs font-bold tracking-[0.6em] uppercase text-gray-400 mb-8">Sobre Mi</h2>
-                        <h3 class="text-7xl lg:text-[9rem] font-bold text-black mb-12 uppercase leading-[0.85] tracking-tighter flex flex-col gap-2">
-                            <span>Aitor</span>
-                            <span class="flex items-center gap-8">
-                                Gómez
-                                <svg class="arrow-icon w-16 h-16 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                            </span>
+                        <h3 class="text-7xl lg:text-[9rem] font-bold text-black mb-12 uppercase leading-[0.85] tracking-tighter">
+                            Aitor<br>Gómez.
                         </h3>
-                        <div class="space-y-10 mb-16">
-                            <p class="text-3xl lg:text-4xl text-gray-600 font-light leading-tight max-w-3xl">
-                            Yo soy Aitor y comienzo el grado superior de Desarrollo de Aplicaciones Multiplataforma. Este es mi <b>Último Intento</b> y voy a aprovecharlo al maximo.
-                            </p>
-                        </div>
-                    </a>
-
-                    <!-- Registro de Actividad -->
-                    <div class="max-w-7xl">
-                        <h4 class="text-[10px] font-black uppercase tracking-[0.5em] text-gray-300 mb-6">Registro de Creación</h4>
-                        <div class="scroll-info-box">
-                            <p class="text-lg text-gray-500 leading-relaxed font-light">
-                                12/01/2026 - Creacion de la Web junto con las paginas de las asignaturas. <a href="Programacion.html"><u>Página Programacion</u></a>
-                            </p>
-                        </div>
+                        <p class="text-3xl lg:text-4xl text-gray-600 font-light leading-tight max-w-3xl">
+                        Me llamo Aitor Gómez y este es mi progreso en el Grado Superior de Desarrollo de Aplicaciones Multiplataforma (DAM).
+                        </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="bg-gray-50 flex items-center justify-center px-8 border-l border-r border-gray-100">
+        <!-- ASIGNATURAS (Página 2) -->
+        <section data-section-name="Asignaturas" class="bg-gray-50 flex items-center justify-center px-8">
             <div class="max-w-7xl mx-auto w-full">
                 <h2 class="text-4xl font-bold text-black uppercase tracking-tighter mb-16">Estructura Académica</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white p-8 card-minimal h-64 flex flex-col justify-between">
-                        <h4 class="font-bold uppercase tracking-tight text-lg">Programación</h4>
-                        <p class="text-gray-500 text-xs uppercase tracking-widest">Java y POO.</p>
-                        <a href="programacion.html" class="text-xs font-black uppercase underline">Detalles</a>
+                    <div class="bg-white p-8 border border-gray-100 h-64 flex flex-col justify-between">
+                        <h4 class="font-bold uppercase tracking-tight text-lg">Programación Java</h4>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest">POO y Algoritmia.</p>
+                        <a href="Programacion.html" class="text-xs font-black uppercase underline">Detalles</a>
                     </div>
-                    <div class="bg-white p-8 card-minimal h-64 flex flex-col justify-between">
-                        <h4 class="font-bold uppercase tracking-tight text-lg">Bases de Datos</h4>
-                        <p class="text-gray-500 text-xs uppercase tracking-widest">SQL y Modelado.</p>
-                        <span class="text-xs font-black uppercase opacity-20">Próximamente</span>
+                    <div class="bg-white p-8 border border-gray-100 h-64 flex flex-col justify-between">
+                        <h4 class="font-bold uppercase tracking-tight text-lg">Bases de Datos SQL</h4>
+                        <a href="Base de Datos.html" class="text-xs font-black uppercase underline">Detalles</a>
                     </div>
-                    <div class="bg-white p-8 card-minimal h-64 flex flex-col justify-between">
+                    <div class="bg-white p-8 border border-gray-100 h-64 flex flex-col justify-between">
                         <h4 class="font-bold uppercase tracking-tight text-lg">Sistemas</h4>
-                        <p class="text-gray-500 text-xs uppercase tracking-widest">Admin de SO.</p>
-                        <span class="text-xs font-black uppercase opacity-20">Próximamente</span>
+                        <a href="Sistemas Informaticos.html" class="text-xs font-black uppercase underline">Detalles</a>
                     </div>
-                    <div class="bg-white p-8 card-minimal h-64 flex flex-col justify-between">
+                    <div class="bg-white p-8 border border-gray-100 h-64 flex flex-col justify-between">
                         <h4 class="font-bold uppercase tracking-tight text-lg">Entornos</h4>
-                        <p class="text-gray-500 text-xs uppercase tracking-widest">Git y Testing.</p>
-                        <span class="text-xs font-black uppercase opacity-20">Próximamente</span>
+                        <a href="Entornos de Desarrollo.html" class="text-xs font-black uppercase underline">Detalles</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <footer class="bg-white flex flex-col justify-center items-center px-8 border-l border-gray-100">
+        <!-- CONTACTO (Página 3) -->
+        <footer data-section-name="Contacto" class="bg-white flex flex-col justify-center items-center px-8">
             <div class="text-center">
                 <span class="text-6xl font-black uppercase tracking-tighter text-black">DAM<span class="font-light">Progress</span></span>
                 <div class="mt-12 flex justify-center gap-12">
-                    <a href="#" class="font-bold uppercase tracking-widest text-sm hover:underline">GitHub</a>
-                    <a href="#" class="font-bold uppercase tracking-widest text-sm hover:underline">LinkedIn</a>
-                    <a href="#" class="font-bold uppercase tracking-widest text-sm hover:underline">Instagram</a>
-
+                    <p class="font-bold uppercase tracking-widest text-sm">GitHub: @damuser</p>
+                    <p class="font-bold uppercase tracking-widest text-sm">LinkedIn: /in/damprofile</p>
                 </div>
-                <p class="mt-24 text-gray-400 text-[15px] uppercase tracking-[0.5em]">&copy; 2026-27 Grado Superior de Desarrollo de Aplicaciones Multiplataforma <br> Aitor Gómez</p>
+                <p class="mt-24 text-gray-400 text-[10px] uppercase tracking-[0.5em]">&copy; 2026-27 Grado Superior DAM <br> Aitor Gómez</p>
             </div>
         </footer>
-
     </div>
 
     <script>
@@ -278,9 +233,11 @@
         const totalPages = 4;
         const wrapper = document.getElementById('main-wrapper');
         const homeLink = document.getElementById('home-link');
+        const heroSearchInput = document.getElementById('hero-search');
+        const heroSearchResults = document.getElementById('hero-search-results');
+        const heroResultsList = document.getElementById('hero-results-list');
         let isScrolling = false;
 
-        // --- ÚLTIMA MODIFICACIÓN: Recuperación de la página guardada al cargar el DOM ---
         window.addEventListener('DOMContentLoaded', () => {
             const savedPage = localStorage.getItem('last_page_index');
             if (savedPage !== null) {
@@ -292,15 +249,9 @@
 
         function goToPage(pageIndex, save = true) {
             if (pageIndex < 0 || pageIndex >= totalPages) return;
-            
             currentPage = pageIndex;
             wrapper.style.transform = `translateX(-${currentPage * 100}vw)`;
-            
-            // --- ÚLTIMA MODIFICACIÓN: Guardado automático de la página actual en localStorage ---
-            if (save) {
-                localStorage.setItem('last_page_index', currentPage);
-            }
-            
+            if (save) localStorage.setItem('last_page_index', currentPage);
             updateUI();
         }
 
@@ -324,37 +275,59 @@
             }
         }
 
-        window.addEventListener('wheel', (e) => {
-            const infoBox = document.querySelector('.scroll-info-box');
-            if (e.target.closest('.scroll-info-box')) {
-                return; 
+        // INTEGRACIÓN DEL BUSCADOR: Lógica de rastreo de contenido centralizado
+        heroSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            heroResultsList.innerHTML = '';
+            
+            if (query.length < 2) {
+                heroSearchResults.classList.add('hidden');
+                return;
             }
 
-            if (isScrolling) return;
+            const sections = document.querySelectorAll('header, section, footer');
+            let found = false;
 
-            if (Math.abs(e.deltaY) > 30 || Math.abs(e.deltaX) > 30) {
-                isScrolling = true;
-                
-                if (e.deltaY > 0 || e.deltaX > 0) {
-                    goToPage(currentPage + 1);
-                } else {
-                    goToPage(currentPage - 1);
+            sections.forEach((sec, index) => {
+                const text = sec.innerText.toLowerCase();
+                const sectionName = sec.getAttribute('data-section-name') || 'Sección';
+
+                if (text.includes(query)) {
+                    found = true;
+                    const item = document.createElement('div');
+                    item.className = "cursor-pointer hover:bg-gray-100 p-4 border-b border-gray-50 transition-colors last:border-0";
+                    item.innerHTML = `
+                        <p class="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-1">${sectionName}</p>
+                        <p class="text-sm font-medium text-black">Coincidencia encontrada</p>
+                    `;
+                    item.onclick = () => {
+                        goToPage(index);
+                        heroSearchInput.value = '';
+                        heroSearchResults.classList.add('hidden');
+                    };
+                    heroResultsList.appendChild(item);
                 }
+            });
 
-                setTimeout(() => {
-                    isScrolling = false;
-                }, 1000);
+            if (!found) {
+                heroResultsList.innerHTML = '<p class="p-4 text-[10px] uppercase font-bold text-gray-400">Sin resultados</p>';
+            }
+            heroSearchResults.classList.remove('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!heroSearchInput.contains(e.target) && !heroSearchResults.contains(e.target)) {
+                heroSearchResults.classList.add('hidden');
             }
         });
 
-        let touchStartX = 0;
-        window.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
-        window.addEventListener('touchend', e => {
-            const touchEndX = e.changedTouches[0].clientX;
-            const diff = touchStartX - touchEndX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) goToPage(currentPage + 1);
+        window.addEventListener('wheel', (e) => {
+            if (isScrolling) return;
+            if (Math.abs(e.deltaY) > 30 || Math.abs(e.deltaX) > 30) {
+                isScrolling = true;
+                if (e.deltaY > 0 || e.deltaX > 0) goToPage(currentPage + 1);
                 else goToPage(currentPage - 1);
+                setTimeout(() => isScrolling = false, 1000);
             }
         });
     </script>
